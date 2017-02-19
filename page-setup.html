@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Photo Printer</title>
+    <link rel="stylesheet" href="/css/page-setup.css">
+  </head>
+  <body>
+    <div class="column">
+      <!-- Options -->
+      <ul class="options options-paper">
+        <li>Paper Options</li>
+        <li>
+          Paper Size
+          <select name="paper-size">
+            <option value="A4">A4</option>
+            <option value="A5">A5</option>
+            <option value="A6">A6</option>
+          </select>
+        </li>
+        <li>
+          Paper Orientation
+          <select name="paper-orientation">
+            <option value="horizontal">Horizontal</option>
+            <option value="vertical">Vertical</option>
+          </select>
+        </li>
+      </ul>
+
+      <ul class="options options-print">
+        <li>Print Options</li>
+        <li>Quality</li>
+        <li>Double Sided</li>
+      </ul>
+
+      <ul class="options options-images">
+        <li>Image Options</li>
+        <li>
+          Image Size
+          <select class="" name="image-size">
+            <option value="5x3">5&quot; x 3&quot;</option>
+            <option value="custom">Custom</option>
+          </select>
+          <input type="number" name="width" class="small-number-input" value="">x<input type="number" name="height" class="small-number-input" value="">
+        </li>
+        <li>
+          Number of images
+          <input type="number" name="images" class="small-number-input" value="4">
+        </li>
+      </ul>
+
+      <ul class="options">
+        <li>
+          <button type="button" name="apply">Apply</button>
+          <button type="button" name="print">Print</button>
+        </li>
+      </ul>
+
+    </div><div class="preview">
+      <div id="print-preview"></div>
+    </div>
+
+  <script type="text/javascript">
+
+    // jQuery selectors
+    var options = $('.options');
+    var paperSize = $('name="paper-size"', options);
+    var orientation = $('[name="paper-orientation"]', options);
+
+    function setupCanvas () {
+
+    }
+
+    function isLandscape () {
+      if (orientation.value() == "landscape") {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    function setPageSize (size) {
+
+      if (isLandscape()) {
+        var paperWidth = 90%;
+
+
+      }
+      switch (size) {
+        case "A4":
+        break;
+      }
+    }
+
+    function setImageSize (width, height) {
+
+    }
+
+    function setImageCount (amount) {
+
+      var imageElement = `
+        <div class="print-image" ondrop="drop(event)" ondragover="allowDrop(event)">
+        </div>
+      `
+    }
+
+    function getPaperRatio (size, side) {
+      var width = false;
+      if (side == "width") width = true; 
+      switch (size) {
+        case "A4":
+        if ("")
+        break;
+      }
+    }
+
+    function getPaperWidth (size, side) {
+
+    }
+
+    function getPaperHeight (size, width) {
+
+    }
+
+    function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    ev.target.appendChild(document.getElementById(data));
+}
+
+  </script>
+  </body>
+</html>
