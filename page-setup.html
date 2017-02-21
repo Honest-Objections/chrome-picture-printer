@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Photo Printer</title>
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/page-setup.css">
     <link rel="stylesheet" href="/css/print.css">
   </head>
@@ -39,14 +40,21 @@
         <li>
           Image Size
           <select class="" name="image-size">
-            <option value="5x3">5&quot; x 3&quot;</option>
+            <option value="3x2">3&quot; x 2&quot;</option>
+            <option value="5x3.75">5&quot; x 3.75&quot;</option>
+            <option value="6x4">6&quot; x 4&quot;</option>
+            <option value="6x4.5">6&quot; x 4.5&quot;</option>
             <option value="custom">Custom</option>
           </select>
-          <input type="number" name="width" class="small-number-input" value="">x<input type="number" name="height" class="small-number-input" value="">
+          <div class="custom-image-size"><input type="number" name="width" class="small-number-input" value="">x<input type="number" name="height" class="small-number-input" value="">
         </li>
         <li>
           Number of images
-          <input type="number" name="images" class="small-number-input" value="4">
+          <input type="number" name="image-count" class="small-number-input" value="4">
+        </li>
+        <li>
+          Image Padding
+          <input type="number" name="image-padding" class="small-number-input" value="5">
         </li>
       </ul>
 
@@ -60,6 +68,9 @@
     </div><div class="preview">
       <div class="print-page"></div>
     </div>
+    <style id="print-media" media="page">
+
+    </style>
     <script src="js/jquery.js"></script>
     <script src="js/print.js"></script>
   </body>

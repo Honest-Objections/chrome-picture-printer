@@ -1,3 +1,5 @@
+$highlight: #48bfea;
+
 html, body {
   margin: 0;
   width: 100%;
@@ -10,7 +12,7 @@ html, body {
   height: 100%;
 
   display: inline-block;
-  background-color: #48bfea;
+  background-color: $highlight;
   color: #fff;
 
   overflow: hidden;
@@ -48,7 +50,19 @@ html, body {
 
 }
 
+.dragover {
+  background-color: $highlight;
+}
 
+.upload {
+  display: none; 
+  box-sizing: border-box;
+  padding: 5px;
+}
+
+.upload:hover {
+  //cursor: pointer;
+}
 
 .small-number-input {
   width: 30px;
