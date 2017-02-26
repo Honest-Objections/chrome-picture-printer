@@ -38,6 +38,10 @@
     max-height: 100%;
   }
 
+  .print-image-source-portrait {
+    transform: rotate(90deg);
+  }
+
 }
 
 .placeholder {

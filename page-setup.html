@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Photo Printer</title>
-    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="/css/page-setup.css">
     <link rel="stylesheet" href="/css/print.css">
   </head>
@@ -14,7 +14,7 @@
         <li>Paper Options</li>
         <li>
           Paper Size
-          <select name="paper-size">
+          <select class="option-input" name="paper-size">
             <option value="A4">A4</option>
             <option value="A5">A5</option>
             <option value="A6">A6</option>
@@ -22,7 +22,7 @@
         </li>
         <li>
           Paper Orientation
-          <select name="paper-orientation">
+          <select class="option-input" name="paper-orientation">
             <option value="landscape">Landscape</option>
             <option value="portrait">Portrait</option>
           </select>
@@ -39,27 +39,35 @@
         <li>Image Options</li>
         <li>
           Image Size
-          <select class="" name="image-size">
+          <select class="option-input" name="image-size">
             <option value="3x2">3&quot; x 2&quot;</option>
             <option value="5x3.75">5&quot; x 3.75&quot;</option>
             <option value="6x4">6&quot; x 4&quot;</option>
             <option value="6x4.5">6&quot; x 4.5&quot;</option>
             <option value="custom">Custom</option>
           </select>
-          <div class="custom-image-size"><input type="number" name="width" class="small-number-input" value="">x<input type="number" name="height" class="small-number-input" value="">
+          <div class="custom-image-size option-input"><input type="number" name="width" class="small-number-input" value="">x<input type="number" name="height" class="small-number-input" value="">
         </li>
         <li>
           Number of images
-          <input type="number" name="image-count" class="small-number-input" value="4">
+          <input type="number" name="image-count" class="small-number-input option-input" value="4">
         </li>
         <li>
           Image Padding
-          <input type="number" name="image-padding" class="small-number-input" value="5">
+          <input type="number" name="image-padding" class="small-number-input option-input" value="5">
+        </li>
+        <li>
+          Rotate Placeholder
+          <input class="option-input" type="radio" name="rotate-image" value="rotate-placeholder">
+        </li>
+        <li>
+          Rotate Image
+          <input class="option-input" type="radio" name="rotate-image" value="rotate-image" checked>
         </li>
       </ul>
 
       <ul class="options">
-        <li>
+        <li class="options-select">
           <button type="button" name="apply">Apply</button>
           <button type="button" name="print">Print</button>
         </li>

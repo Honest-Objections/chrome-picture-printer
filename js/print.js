@@ -6,11 +6,14 @@ var imageCount = $('[name="image-count"]', options);
 var imageSize = $('[name="image-size"]', options);
 var imagePadding = $('[name="image-padding"]', options);
 var customImageSize = $('.custom-image-size', options);
+var rotations = $('[name=rotate-image]:checked', options);
 
 var preview = $('.preview');
 var page = $('.print-page');
 
-setupCanvas();
+var images = [];
+
+applySettings();
 
 // Reapply settings
 $('[name="apply"]', options).on("click", function () {
@@ -51,7 +54,7 @@ function setupCanvas () {
 
   // Page Orientation and height
   if (isLandscape()) {
-    pageWidth = preview.width() * 0.5;
+    pageWidth = preview.width() * 0.9;
     pageHeight = pageWidth * getPaperRatio(paperSize.val(), "landscape");
     setImageCount(imageCount.val());
     setImageSize(getPixelSizeInMm(pageHeight));
@@ -66,7 +69,7 @@ function setupCanvas () {
   page.css("height", pageHeight);
   page.css("width", pageWidth);
 
-  console.log("");
+  saveSettings();
 
 }
 
@@ -116,8 +119,8 @@ function setImageSize (mm) {
   .css("min-width", imageWidth * mm)
   .css("max-width", imageWidth * mm)
   .css("height", imageHeight * mm)
-  .css("min-height", imageHeight * mm)
   .css("max-height", imageHeight * mm)
+  .css("min-height", imageHeight * mm)
   .css("margin", imagePadding.val() * mm);
 
 }
@@ -166,6 +169,8 @@ function setImageCount (amount) {
           if (type == "text/plain") {
             var url = e.dataTransfer.getData(type);
             console.log("dragged", url, type);
+            images.push(url);
+            saveImages();
             setImageFromUrl(ev.target, url);
           }
         });
@@ -178,8 +183,55 @@ function setImageCount (amount) {
 
 function setImageFromUrl (place, url) {
 
-  $(place).removeClass("dragover placeholder");
-  $('.print-image-source', place).attr("src", url);
+  place = $(place);
+  place.removeClass("dragover placeholder");
+  var image = $('.print-image-source', place);
+  // rotate image
+  getImageMeta(url, function (width, height) {
+
+    if (width < height) {
+      var orgHeight = image.parent().height();
+      var orgWidth = image.parent().width();
+      console.log(rotations.val());
+      if (rotations.val() == "rotate-placeholder") {
+        console.log("Portrait picture, animating", image.parent());
+        image.parent().animate({
+          'height': orgWidth,
+          'min-height': orgWidth,
+          'max-height': orgWidth,
+          'width': orgHeight,
+          'min-width': orgHeight,
+          'max-width': orgHeight
+        }, 500, function () {
+          image.attr("src", url);
+        });
+      } else {
+
+      }
+    } else {
+      console.log("Landscape picture");
+      image.attr("src", url);
+    }
+
+  });
+
+  place.on("click", function () {
+    if (!place.hasClass("placeholder")) {
+      place.addClass("placeholder");
+      var removeIndex = images.indexOf(image.attr("src"));
+      console.log("Removing index", removeIndex, "from", images);
+      images.splice(removeIndex, 1);
+      console.log("images", images);
+      image.attr("src", url);
+      saveImages();
+    }
+  });
+}
+
+function getImageMeta(url, callback) {
+    var img = new Image();
+    img.src = url;
+    img.onload = function() { callback(this.width, this.height); }
 }
 
 function getPixelSizeInMm (pixelHeight) {
@@ -231,14 +283,74 @@ function drop(ev) {
   //ev.target.appendChild(document.getElementById(data));
 }
 
+function saveImages () {
+  console.log("Saving images", images);
+  chrome.extension.sendRequest(
+    {action:"save", saveName:"images", saveContent: images},
+    function(response){
+      console.log("Save response:", response);
+    });
+
+}
+
+function loadImages () {
+  chrome.extension.sendRequest({action: "load", load:"images"}, function (response) {
+    console.log("Loading images", response);
+    images = response.loaded.images;
+    applyImages();
+  });
 
 
+}
 
+function applyImages () {
+  console.log("Applying images");
+  $('.print-image-source').each(function (index) {
+      var image = images[index];
+      if (image) {
+        console.log($(this), this);
+        setImageFromUrl($(this).parent(), image);
+      }
+  });
+}
 
+function saveSettings () {
 
+  var printSettings = {
+      'paperSize': paperSize.val(),
+      'paperOrientation': orientation.val(),
+      'imageCount': imageCount.val(),
+      'imageSize': imageSize.val(),
+      'imagePadding': imagePadding.val()
+    }
 
+  chrome.extension.sendRequest({action:"save", saveName: "printSettings", saveContent: printSettings}, function(response){
+    console.log("Save response:", response);
+  });
 
+}
 
+function applySettings () {
+
+  chrome.extension.sendRequest({action: "load", load:"printSettings"}, function (response) {
+
+        if (response.loaded) {
+          console.log("Recovered settings", response);
+          var result = response.loaded.printSettings;
+          result.paperSize ? $('option[value="' + result.paperSize + '"]', paperSize).attr("selected",true) : "";
+          result.paperOrientation ? $('option[value="' + result.paperOrientation + '"]', orientation).attr("selected",true) : "";
+          result.imageCount ? imageCount.val(result.imageCount) : "";
+          result.imageSize ? $('option[value="' + result.imageSize + '"]', imageSize).attr("selected",true) : "";
+          result.imagePadding ? imagePadding.val(result.imagePadding) : "";
+        } else {
+          console.log("No settings saved");
+        }
+
+        setupCanvas();
+        loadImages();
+  });
+
+}
 
 
 /// Printing

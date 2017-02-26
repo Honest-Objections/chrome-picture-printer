@@ -11,5 +11,9 @@
 
   "background": {
     "scripts": ["background.js", "js/jquery.js"]
-  }
+  },
+
+  "permissions": [
+    "storage"
+  ]
 }

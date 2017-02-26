@@ -6,12 +6,40 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   chrome.tabs.create({url:chrome.extension.getURL("page-setup.html")});
 
 
+});
 
-  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-      console.log("Background message recieved", request, "sender", sender);
-      if (request.setup) {
-        console.log("Adding listeners"); 
-      }
-    });
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    console.log("Background message recieved", request, "sender", sender);
+});
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+
+  switch (request.action) {
+
+  case "save":
+    var save = {};
+    save[request.saveName] = request.saveContent;
+    console.log("Saving", save);
+    chrome.storage.sync.set(save,
+      function(result) {
+        console.log("Saved, sending response..");
+        sendResponse({
+          response: "Saved",
+          saved: request.save,
+          success: result
+        });
+      });
+    break;
+
+    case "load":
+      console.log("Loading", request.load);
+      chrome.storage.sync.get(request.load, function (result) {
+        sendResponse({
+          response: "Load",
+          loaded: result
+        });
+      });
+      break;
+  }
 
 });

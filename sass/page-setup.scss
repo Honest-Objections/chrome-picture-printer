@@ -8,8 +8,13 @@ html, body {
 }
 
 .column {
+  box-sizing: border-box;
+
   width: 250px;
   height: 100%;
+
+  padding-left: 5px;
+  padding-right: 5px;
 
   display: inline-block;
   background-color: $highlight;
@@ -29,9 +34,38 @@ html, body {
     margin: none;
     border: none;
 
+    li {
+      padding: 5px 0;
+    }
+
     li:first-of-type {
       font-weight: bold;
     }
+
+    .options-select {
+      text-align: center;
+    }
+
+    .option-input {
+      float: right;
+    }
+  }
+}
+
+.image-rotate {
+  //animation-duration: 0.5s;
+  //animation-name: transform;
+  //animation-fill-mode: forwards;
+  transform: rotate(90deg);
+  height: 100%;
+}
+
+@keyframes transform {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(90deg);
   }
 }
 
@@ -51,11 +85,15 @@ html, body {
 }
 
 .dragover {
-  background-color: $highlight;
+  background-color: $highlight !important;
+
+  .upload {
+    display: none;
+  }
 }
 
 .upload {
-  display: none; 
+  display: none;
   box-sizing: border-box;
   padding: 5px;
 }
