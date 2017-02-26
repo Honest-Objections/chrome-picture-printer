@@ -6,7 +6,6 @@ var imageCount = $('[name="image-count"]', options);
 var imageSize = $('[name="image-size"]', options);
 var imagePadding = $('[name="image-padding"]', options);
 var customImageSize = $('.custom-image-size', options);
-var rotations = $('[name=rotate-image]:checked', options);
 
 var preview = $('.preview');
 var page = $('.print-page');
@@ -69,6 +68,7 @@ function setupCanvas () {
   page.css("height", pageHeight);
   page.css("width", pageWidth);
 
+  applyImages();
   saveSettings();
 
 }
@@ -192,8 +192,8 @@ function setImageFromUrl (place, url) {
     if (width < height) {
       var orgHeight = image.parent().height();
       var orgWidth = image.parent().width();
-      console.log(rotations.val());
-      if (rotations.val() == "rotate-placeholder") {
+      if ($('[name=rotate-image]:checked', options).val() == "rotate-placeholder") {
+        // Landscape to portrait
         console.log("Portrait picture, animating", image.parent());
         image.parent().animate({
           'height': orgWidth,
@@ -203,14 +203,25 @@ function setImageFromUrl (place, url) {
           'min-width': orgHeight,
           'max-width': orgHeight
         }, 500, function () {
+          image.addClass("print-image-source-landscape");
           image.attr("src", url);
         });
       } else {
-
+        // Portrait to Landscape
+        if (image.height < orgWidth) {
+          image.css("width", orgHeight + "px");
+        } else {
+          image.css("height", orgWidth + "px");
+        }
+        image.attr("src", url);
+        image.css("position", "relative");
+        image.css("bottom", "0px");
+        image.addClass("print-image-source-portrait");
       }
     } else {
       console.log("Landscape picture");
       image.attr("src", url);
+      image.addClass("print-image-source-landscape");
     }
 
   });
