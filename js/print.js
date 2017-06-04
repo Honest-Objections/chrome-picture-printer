@@ -27,6 +27,11 @@ $('[name="print"]', options).on("click", function () {
   window.print();
 });
 
+$('[name="help"]', options).on("click", function () {
+   console.log("opening help");
+   chrome.extension.sendRequest({action:"help"});
+});
+
 
 
 // Custom Image Sizes

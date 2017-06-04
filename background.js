@@ -40,6 +40,11 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         });
       });
       break;
+
+      case "help":
+      console.log("opening help page");
+      chrome.tabs.create({url:chrome.extension.getURL("help.html")});
+      break;
   }
 
 });
