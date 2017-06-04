@@ -133,16 +133,18 @@ function setImageSize (mm) {
 
 function setImageCount (amount) {
 
-  var imageElement = `
-    <div class="print-image placeholder">
-      <img class="print-image-source" />
-      <i class="fa fa-plus upload" />
-    </div>
-  `;
 
   page.empty();
   console.log("Amount", amount);
   for (var i = 0; i < amount; i++) {
+     var imageElement = `
+     <div class="print-image placeholder">
+     <img class="print-image-source" />
+     <label for="fileUploadInput${i}" class="file-upload"></label>
+     <input id="fileUploadInput${i}" class="fileUpload" type="file" accept="image/*" />
+     <i class="fa fa-plus upload" />
+     </div>
+     `;
     page.append(imageElement);
   }
 
@@ -166,6 +168,7 @@ function setImageCount (amount) {
     .bind('drop', function(ev) {
       console.log(ev);
       var e = ev.originalEvent;
+      var imageUrl = false;
       if (e.preventDefault) e.preventDefault(); // stops the browser from redirecting off to the text.
 
       if (e.dataTransfer.types) {
@@ -174,16 +177,53 @@ function setImageCount (amount) {
           if (type == "text/plain") {
             var url = e.dataTransfer.getData(type);
             console.log("dragged", url, type);
-            images.push(url);
-            saveImages();
-            setImageFromUrl(ev.target, url);
-          }
+            if (checkURL(url)) {
+               images.push(url);
+               saveImages();
+               setImageFromUrl(ev.target, url);
+               imageUrl = true;
+               return;
+            }
+         }
         });
+        if (!imageUrl) {
+           alert("You must drag images directly.");
+           $(ev.target).removeClass('dragover');
+        }
       }
 
       return false;
     });
+
+   // $(this).on("click", function () {
+   //    let placeHolder = $(this);
+   //    console.log("clicked", placeHolder.hasClass("placeholder"))
+   //    if (placeHolder.hasClass("placeHolder")) {
+   //       $(".fileUpload", placeHolder).trigger('click');
+   //    }
+   // });
+
+   $(".fileUpload", $(this)).on("change", function (e) {
+      var fileInput = $(this)[0];
+      var file = fileInput.files[0];
+      var url;
+      console.log("uploading", file);
+
+      if (file) {
+         // console.log("uploaded", $(this)[0].parentElement);
+         url = URL.createObjectURL(e.target.files[0]);
+         images.push(url);
+         saveImages();
+         setImageFromUrl($(this)[0].parentElement, url);
+     }
+
+   });
+
   });
+}
+
+function checkURL(url) {
+    return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
 }
 
 function setImageFromUrl (place, url) {
@@ -311,9 +351,12 @@ function saveImages () {
 
 function loadImages () {
   chrome.extension.sendRequest({action: "load", load:"images"}, function (response) {
-    console.log("Loading images", response);
-    images = response.loaded.images;
-    applyImages();
+     console.log("loading images", response);
+    if (response.loaded && response.loaded.images) {
+      console.log("Loading images", response);
+      images = response.loaded.images;
+      applyImages();
+   }
   });
 
 
@@ -350,7 +393,7 @@ function applySettings () {
 
   chrome.extension.sendRequest({action: "load", load:"printSettings"}, function (response) {
 
-        if (response.loaded) {
+        if (response.loaded && Object.keys(response.loaded).length !== 0) {
           console.log("Recovered settings", response);
           var result = response.loaded.printSettings;
           result.paperSize ? $('option[value="' + result.paperSize + '"]', paperSize).attr("selected",true) : "";
@@ -409,6 +452,16 @@ function setImagesToMm () {
   .css("min-height", imageHeight  + "mm")
   .css("max-height", imageHeight  + "mm")
   .css("margin", imagePadding.val());
+
+  // Portrait images
+   $('.print-image-source-portrait', page).each(function () {
+     var imageElement = $(this);
+     if (imageElement.height < imageElement.width) {
+       imageElement.css("width", imageHeight + "mm");
+     } else {
+       imageElement.css("height", imageWidth + "mm");
+     }
+   });
 }
 
 function setPageToMm () {

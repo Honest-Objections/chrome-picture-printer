@@ -59,7 +59,28 @@
     >img {
       display: none;
     }
+
+    .file-upload {
+       display:block;
+       height:50px;
+       width:50px;
+       position: absolute;
+       opacity: 0;
+    }
+
+    .file-upload:hover {
+       cursor: pointer;
+    }
 }
+
+.file-upload {
+   display: none;
+}
+
+.fileUpload {
+   display:none;
+}
+
 
 
 @media print {

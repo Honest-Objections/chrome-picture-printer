@@ -57,7 +57,7 @@ html, body {
   //animation-name: transform;
   //animation-fill-mode: forwards;
   transform: rotate(90deg);
-  height: 100%;
+
 }
 
 @keyframes transform {
@@ -86,6 +86,10 @@ html, body {
 
 .dragover {
   background-color: $highlight !important;
+
+  .file-upload {
+     display: none;
+  }
 
   .upload {
     display: none;
