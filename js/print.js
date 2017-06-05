@@ -54,7 +54,7 @@ function setupCanvas () {
 
   // Page Orientation and height
   if (isLandscape()) {
-    pageWidth = preview.width() * 0.9;
+    pageWidth = preview.width > 1300 ? preview.width() * 0.9 : preview.width() * 0.6;
     pageHeight = pageWidth * getPaperRatio(paperSize.val(), "landscape");
     setImageCount(imageCount.val());
     setImageSize(getPixelSizeInMm(pageHeight));
@@ -208,6 +208,7 @@ function setImageCount (amount) {
          images.push(url);
          saveImages();
          setImageFromUrl($(this)[0].parentElement, url);
+         ga('send', 'event', "Image", "added", "uploaded");
      }
 
    });
