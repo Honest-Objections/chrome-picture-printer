@@ -148,7 +148,8 @@ function setImageCount (amount) {
   $('.print-image', page).each(function () {
     // Update the drop zone class on drag enter/leave
     $(this).bind('dragenter', function(ev) {
-        $(ev.target).addClass('dragover');
+        var placeholder = $(ev.target);
+        if (placeholder.hasClass("placeholder")) placeholder.addClass('dragover');
         return false;
     })
     .bind('dragleave', function(ev) {
@@ -165,39 +166,37 @@ function setImageCount (amount) {
     .bind('drop', function(ev) {
       var e = ev.originalEvent;
       var imageUrl = false;
-      if (e.preventDefault) e.preventDefault(); // stops the browser from redirecting off to the text.
 
-      if (e.dataTransfer.types) {
-        // For each data type
-        [].forEach.call(e.dataTransfer.types, function (type) {
-          if (type == "text/plain") {
-            var url = e.dataTransfer.getData(type);
-            console.log("dragged", url, type);
-            if (checkURL(url)) {
-               images.push(url);
-               saveImages();
-               setImageFromUrl(ev.target, url);
-               imageUrl = true;
-               return;
-            }
-         }
-        });
-        if (!imageUrl) {
-           alert("You must drag images directly.");
-           $(ev.target).removeClass('dragover');
+      // If placeholder
+      if ($(ev.target).hasClass("placeholder")) {
+
+        if (e.preventDefault) e.preventDefault(); // stops the browser from redirecting off to the text.
+
+        if (e.dataTransfer.types) {
+          // For each data type
+          [].forEach.call(e.dataTransfer.types, function (type) {
+            if (type == "text/plain") {
+              var url = e.dataTransfer.getData(type);
+              if (checkURL(url)) {
+                 ga('send', 'event', "Image", "added", "dragged");
+                 images.push(url);
+                 saveImages();
+                 setImageFromUrl(ev.target, url);
+                 imageUrl = true;
+                 return;
+              }
+           }
+          });
+          if (!imageUrl) {
+             alert("You must drag images directly.");
+             ga('send', 'event', "Image", "failed", "dragged");
+             $(ev.target).removeClass('dragover');
+          }
         }
-      }
 
+      }
       return false;
     });
-
-   // $(this).on("click", function () {
-   //    let placeHolder = $(this);
-   //    console.log("clicked", placeHolder.hasClass("placeholder"))
-   //    if (placeHolder.hasClass("placeHolder")) {
-   //       $(".fileUpload", placeHolder).trigger('click');
-   //    }
-   // });
 
    $(".fileUpload", $(this)).on("change", function (e) {
       var fileInput = $(this)[0];
@@ -267,6 +266,7 @@ function setImageFromUrl (place, url) {
     if (!place.hasClass("placeholder")) {
       ga('send', 'event', "Image", "removed");
       place.addClass("placeholder");
+      $('.print-image-source', place).removeClass("print-image-source-landscape print-image-source-portrait");
       var removeIndex = images.indexOf(image.attr("src"));
       images.splice(removeIndex, 1);
       image.attr("src", url);
