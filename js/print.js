@@ -30,7 +30,6 @@ $('[name="print"]', options).on("click", function () {
 });
 
 $('[name="help"]', options).on("click", function () {
-   console.log("opening help");
    chrome.extension.sendRequest({action:"help"});
 });
 
@@ -53,11 +52,6 @@ function setupCanvas () {
   var pageWidth;
   var pageHeight;
 
-  console.log("");
-  console.log("Setting up");
-  console.log("Page is landscape:" + isLandscape());
-
-
   // Page Orientation and height
   if (isLandscape()) {
     pageWidth = preview.width() * 0.9;
@@ -71,7 +65,6 @@ function setupCanvas () {
     setImageSize(getPixelSizeInMm(pageWidth));
   }
 
-  console.log("height", pageHeight, "width", pageWidth);
   page.css("height", pageHeight);
   page.css("width", pageWidth);
 
@@ -140,7 +133,6 @@ function setImageCount (amount) {
 
 
   page.empty();
-  console.log("Amount", amount);
   for (var i = 0; i < amount; i++) {
      var imageElement = `
      <div class="print-image placeholder">
@@ -171,7 +163,6 @@ function setImageCount (amount) {
 
     // Handle the final drop...
     .bind('drop', function(ev) {
-      console.log(ev);
       var e = ev.originalEvent;
       var imageUrl = false;
       if (e.preventDefault) e.preventDefault(); // stops the browser from redirecting off to the text.
@@ -212,10 +203,8 @@ function setImageCount (amount) {
       var fileInput = $(this)[0];
       var file = fileInput.files[0];
       var url;
-      console.log("uploading", file);
 
       if (file) {
-         // console.log("uploaded", $(this)[0].parentElement);
          url = URL.createObjectURL(e.target.files[0]);
          images.push(url);
          saveImages();
@@ -244,7 +233,6 @@ function setImageFromUrl (place, url) {
       var orgWidth = image.parent().width();
       if ($('[name=rotate-image]:checked', options).val() == "rotate-placeholder") {
         // Landscape to portrait
-        console.log("Portrait picture, animating", image.parent());
         image.parent().animate({
           'height': orgWidth,
           'min-height': orgWidth,
@@ -269,7 +257,6 @@ function setImageFromUrl (place, url) {
         image.addClass("print-image-source-portrait");
       }
     } else {
-      console.log("Landscape picture");
       image.attr("src", url);
       image.addClass("print-image-source-landscape");
     }
@@ -281,9 +268,7 @@ function setImageFromUrl (place, url) {
       ga('send', 'event', "Image", "removed");
       place.addClass("placeholder");
       var removeIndex = images.indexOf(image.attr("src"));
-      console.log("Removing index", removeIndex, "from", images);
       images.splice(removeIndex, 1);
-      console.log("images", images);
       image.attr("src", url);
       saveImages();
     }
@@ -308,8 +293,6 @@ function getPixelSizeInMm (pixelHeight) {
     paperHeight = 148;
     break;
   }
-
-  console.log("Page is ", pixelHeight, "tall. Paper is ", paperHeight, "mm");
 
   return pixelHeight / paperHeight;
 }
@@ -339,27 +322,21 @@ function allowDrop(ev) {
 
 function drop(ev) {
   ev.preventDefault();
-  console.dir(ev);
   var data = ev.originalEvent.dataTransfer;
-  //console.log("Recieved data", data, data.dropEffect, data.types, data.files);
   //ev.target.appendChild(document.getElementById(data));
 }
 
 function saveImages () {
-  console.log("Saving images", images);
   chrome.extension.sendRequest(
     {action:"save", saveName:"images", saveContent: images},
     function(response){
-      console.log("Save response:", response);
     });
 
 }
 
 function loadImages () {
   chrome.extension.sendRequest({action: "load", load:"images"}, function (response) {
-     console.log("loading images", response);
     if (response.loaded && response.loaded.images) {
-      console.log("Loading images", response);
       images = response.loaded.images;
       applyImages();
    }
@@ -369,11 +346,9 @@ function loadImages () {
 }
 
 function applyImages () {
-  console.log("Applying images");
   $('.print-image-source').each(function (index) {
       var image = images[index];
       if (image) {
-        console.log($(this), this);
         setImageFromUrl($(this).parent(), image);
       }
   });
@@ -389,19 +364,15 @@ function saveSettings () {
       'imagePadding': imagePadding.val()
     }
 
-  chrome.extension.sendRequest({action:"save", saveName: "printSettings", saveContent: printSettings}, function(response){
-    console.log("Save response:", response);
-  });
+  chrome.extension.sendRequest({action:"save", saveName: "printSettings", saveContent: printSettings}, function(response){});
 
 }
 
 function applySettings () {
-
   ga('send', 'event', "Settings", "updated");
   chrome.extension.sendRequest({action: "load", load:"printSettings"}, function (response) {
 
         if (response.loaded && Object.keys(response.loaded).length !== 0) {
-          console.log("Recovered settings", response);
           var result = response.loaded.printSettings;
           result.paperSize ? $('option[value="' + result.paperSize + '"]', paperSize).attr("selected",true) : "";
           result.paperOrientation ? $('option[value="' + result.paperOrientation + '"]', orientation).attr("selected",true) : "";
@@ -421,7 +392,6 @@ function applySettings () {
 
 /// Printing
 function convertStylingToMm () {
-  console.log("Converting styling to mm");
   setPageToMm();
   setImagesToMm();
 }

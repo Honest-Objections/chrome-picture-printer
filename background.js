@@ -2,7 +2,6 @@
 chrome.browserAction.onClicked.addListener(function(tab) {
 
   // Send a message to the active tab
-  console.log("Opening UI");
   chrome.tabs.create({url:chrome.extension.getURL("page-setup.html")});
 
 
@@ -19,10 +18,8 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   case "save":
     var save = {};
     save[request.saveName] = request.saveContent;
-    console.log("Saving", save);
     chrome.storage.sync.set(save,
       function(result) {
-        console.log("Saved, sending response..");
         sendResponse({
           response: "Saved",
           saved: request.save,
@@ -32,7 +29,6 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     break;
 
     case "load":
-      console.log("Loading", request.load);
       chrome.storage.sync.get(request.load, function (result) {
         sendResponse({
           response: "Load",
@@ -42,7 +38,6 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
       break;
 
       case "help":
-      console.log("opening help page");
       chrome.tabs.create({url:chrome.extension.getURL("help.html")});
       break;
   }
