@@ -40,7 +40,7 @@ $('[name="help"]', options).on("click", function () {
 customImageSize.hide();
 imageSize.on("change", function () {
   var self = $(this);
-  if (self.val() == "custom") {
+  if (self.val() == "custom_in" || self.val() == "custom_cm") {
     customImageSize.show();
   } else {
     customImageSize.hide();
@@ -93,34 +93,37 @@ function setImageSize (mm) {
   var imageHeight;
   var imageWidth;
 
-  console.log("Image size: ", imageSize.val());
   switch (imageSize.val()) {
     case "6x4":
-    imageWidth = 150;
-    imageHeight =  100;
+    imageWidth = 6 * 25.4;
+    imageHeight =  4 * 25.4;
     break;
 
     case "6x4.5":
-    imageWidth = 150;
-    imageHeight = 110;
+    imageWidth = 6 * 25.4;
+    imageHeight = 4.5 * 25.4;
     break;
 
     case "5x3.75":
-    imageWidth = 130;
-    imageHeight = 90;
+    imageWidth = 5 * 25.4;
+    imageHeight = 3.75 * 25.4;
     break;
 
     case "3x2":
-    imageWidth = 76;
-    imageHeight = 51;
+    imageWidth = 3 * 25.4;
+    imageHeight = 2  * 25.4;
     break;
 
-    case "custom":
+    case "custom_in":
+    imageWidth = $('.custom-image-size [name="width"]').val() * 25.4;
+    imageHeight = $('.custom-image-size [name="height"]').val()  * 25.4;
+    break;
+
+    case "custom_cm":
+    imageWidth = $('.custom-image-size [name="width"]').val() * 10;
+    imageHeight = $('.custom-image-size [name="height"]').val() * 10;
     break;
   }
-
-  console.log("One mm is ", mm, "pixels");
-  console.log("image: ", imageWidth, "x", imageHeight);
 
   $('.print-image', page).css("width", imageWidth * mm)
   .css("min-width", imageWidth * mm)
@@ -426,26 +429,33 @@ function convertStylingToMm () {
 function setImagesToMm () {
   switch (imageSize.val()) {
     case "6x4":
-    imageWidth = 150;
-    imageHeight =  100;
+    imageWidth = 6 * 25.4;
+    imageHeight =  4 * 25.4;
     break;
 
     case "6x4.5":
-    imageWidth = 150;
-    imageHeight = 110;
+    imageWidth = 6 * 25.4;
+    imageHeight = 4.5 * 25.4;
     break;
 
     case "5x3.75":
-    imageWidth = 130;
-    imageHeight = 90;
+    imageWidth = 5 * 25.4;
+    imageHeight = 3.75 * 25.4;
     break;
 
     case "3x2":
-    imageWidth = 76;
-    imageHeight = 51;
+    imageWidth = 3 * 25.4;
+    imageHeight = 2  * 25.4;
     break;
 
-    case "custom":
+    case "custom_in":
+    imageWidth = $('.custom-image-size [name="width"]').val() * 25.4;
+    imageHeight = $('.custom-image-size [name="height"]').val()  * 25.4;
+    break;
+
+    case "custom_cm":
+    imageWidth = $('.custom-image-size [name="width"]').val() * 10;
+    imageHeight = $('.custom-image-size [name="height"]').val() * 10;
     break;
   }
 
