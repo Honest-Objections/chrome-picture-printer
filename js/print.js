@@ -216,7 +216,10 @@ function setImageCount (amount) {
 }
 
 function checkURL(url) {
-    return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+  let valid = false;
+  valid = (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+  if (!valid) valid = (url.match(/googleusercontent/) != null);
+  return valid;
 }
 
 function setImageFromUrl (place, url) {
