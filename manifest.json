@@ -1,9 +1,10 @@
 {
   "manifest_version": 2,
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
 
   "name": "Picture Printer",
   "description": "An extension to format pictures when printing them via Google Cloud.",
-  "version": "0.5.0",
+  "version": "0.6.0",
 
   "browser_action": {
     "default_icon": "icon.png"

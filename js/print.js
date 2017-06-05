@@ -13,6 +13,7 @@ var page = $('.print-page');
 var images = [];
 
 applySettings();
+ga('send', 'pageview', 'print-preview.html');
 
 // Reapply settings
 $('[name="apply"]', options).on("click", function () {
@@ -20,6 +21,7 @@ $('[name="apply"]', options).on("click", function () {
 });
 
 $('[name="print"]', options).on("click", function () {
+  ga('send', 'event', "Settings", "print");
   convertStylingToMm();
   $('#print-media').html(`
       size: ${ paperSize.val() } ${ orientation.val() };
@@ -273,6 +275,7 @@ function setImageFromUrl (place, url) {
 
   place.on("click", function () {
     if (!place.hasClass("placeholder")) {
+      ga('send', 'event', "Image", "removed");
       place.addClass("placeholder");
       var removeIndex = images.indexOf(image.attr("src"));
       console.log("Removing index", removeIndex, "from", images);
@@ -391,6 +394,7 @@ function saveSettings () {
 
 function applySettings () {
 
+  ga('send', 'event', "Settings", "updated");
   chrome.extension.sendRequest({action: "load", load:"printSettings"}, function (response) {
 
         if (response.loaded && Object.keys(response.loaded).length !== 0) {
