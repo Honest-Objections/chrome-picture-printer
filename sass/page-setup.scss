@@ -95,7 +95,7 @@ html, body {
   background-color: $highlight !important;
 
   .file-upload {
-     display: none;
+     display: none !important;
   }
 
   .upload {
