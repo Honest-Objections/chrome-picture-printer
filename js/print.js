@@ -221,6 +221,39 @@ function checkURL(url) {
   valid = (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
   if (!valid) valid = (url.match(/googleusercontent/) != null);
   return valid;
+
+function rotateImage (image) {
+  var orgHeight = image.parent().height();
+  var orgWidth = image.parent().width();
+
+  image.removeAttr("style");
+
+    // Portrait to Landscape
+    if (image.height < orgWidth) {
+      image.css("width", orgHeight + "px");
+    } else {
+      image.css("height", orgWidth + "px");
+    }
+    image.css("position", "relative");
+    image.css("bottom", "0px");
+    image.addClass("print-image-source-portrait");
+}
+
+function rotatePlaceholder (image) {
+  var orgHeight = image.parent().height();
+  var orgWidth = image.parent().width();
+
+  // Landscape to portrait
+  image.parent().animate({
+    'height': orgWidth,
+    'min-height': orgWidth,
+    'max-height': orgWidth,
+    'width': orgHeight,
+    'min-width': orgHeight,
+    'max-width': orgHeight
+  }, 500, function () {
+    image.addClass("print-image-source-landscape");
+  });
 }
 
 function setImageFromUrl (place, url) {
@@ -235,34 +268,14 @@ function setImageFromUrl (place, url) {
       var orgHeight = image.parent().height();
       var orgWidth = image.parent().width();
       if ($('[name=rotate-image]:checked', options).val() == "rotate-placeholder") {
-        // Landscape to portrait
-        image.parent().animate({
-          'height': orgWidth,
-          'min-height': orgWidth,
-          'max-height': orgWidth,
-          'width': orgHeight,
-          'min-width': orgHeight,
-          'max-width': orgHeight
-        }, 500, function () {
-          image.addClass("print-image-source-landscape");
-          image.attr("src", url);
-        });
+        rotatePlaceholder(image);
       } else {
-        // Portrait to Landscape
-        if (image.height < orgWidth) {
-          image.css("width", orgHeight + "px");
-        } else {
-          image.css("height", orgWidth + "px");
-        }
-        image.attr("src", url);
-        image.css("position", "relative");
-        image.css("bottom", "0px");
-        image.addClass("print-image-source-portrait");
+        rotateImage(image);
       }
     } else {
-      image.attr("src", url);
       image.addClass("print-image-source-landscape");
     }
+    image.attr("src", url);
 
   });
 
@@ -345,8 +358,6 @@ function loadImages () {
       applyImages();
    }
   });
-
-
 }
 
 function applyImages () {
@@ -355,6 +366,10 @@ function applyImages () {
       if (image) {
         setImageFromUrl($(this).parent(), image);
       }
+  });
+
+  $('.print-image-source-portrait').each(function () {
+    rotateImage($(this));
   });
 }
 
