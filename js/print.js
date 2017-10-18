@@ -283,7 +283,7 @@ function setImageFromUrl (place, url) {
     if (!place.hasClass("placeholder")) {
       ga('send', 'event', "Image", "removed");
       place.addClass("placeholder");
-      $('.print-image-source', place).removeClass("print-image-source-landscape print-image-source-portrait");
+      $('.print-image-source', place).removeClass("print-image-source-landscape print-image-source-portrait").removeAttr("style");
       var removeIndex = images.indexOf(image.attr("src"));
       images.splice(removeIndex, 1);
       image.attr("src", url);
