@@ -11,6 +11,32 @@ var preview = $('.preview');
 var page = $('.print-page');
 
 var images = [];
+var paper = {
+  "A4": {
+    height:210,
+    width:297
+  },
+  "A5": {
+    height:148,
+    width:210
+  },
+  "US Letter": {
+    height:279,
+    width:216
+  },
+  "US Half Letter": {
+    height:216,
+    width:140
+  },
+  "US Legal": {
+    height:356,
+    width:216
+  },
+  "Junior Legal": {
+    height:203,
+    width:127
+  }
+};
 
 applySettings();
 ga('send', 'pageview', 'print-preview.html');
@@ -20,6 +46,7 @@ $('[name="apply"]', options).on("click", function () {
   setupCanvas();
 });
 
+// When user clicks print
 $('[name="print"]', options).on("click", function () {
   ga('send', 'event', "Settings", "print");
   convertStylingToMm();
@@ -29,11 +56,18 @@ $('[name="print"]', options).on("click", function () {
   window.print();
 });
 
+// When user clicks help
 $('[name="help"]', options).on("click", function () {
    chrome.extension.sendRequest({action:"help"});
 });
 
-
+// Fill options with paper types
+for(paperType in paper) {
+   var opt = document.createElement("option");
+   opt.value= paperType;
+   opt.innerHTML = paperType;
+   $('[name="paper-size"]', options).append(opt);
+}
 
 // Custom Image Sizes
 customImageSize.hide();
@@ -55,12 +89,12 @@ function setupCanvas () {
   // Page Orientation and height
   if (isLandscape()) {
     pageWidth = preview.width > 1300 ? preview.width() * 0.9 : preview.width() * 0.6;
-    pageHeight = pageWidth * getPaperRatio(paperSize.val(), "landscape");
+    pageHeight = pageWidth * getPaperRatio();
     setImageCount(imageCount.val());
     setImageSize(getPixelSizeInMm(pageHeight));
   } else {
     pageHeight = preview.height() * 0.9;
-    pageWidth = pageHeight * getPaperRatio(paperSize.val(), "portrait");
+    pageWidth = pageHeight * getPaperRatio();
     setImageCount(imageCount.val());
     setImageSize(getPixelSizeInMm(pageWidth));
   }
@@ -299,38 +333,11 @@ function getImageMeta(url, callback) {
 }
 
 function getPixelSizeInMm (pixelHeight) {
-  var paperFormat = paperSize.val();
-  var paperHeight;
-  switch (paperFormat) {
-    case "A4":
-    paperHeight = 210;
-    break;
-
-    case "A5":
-    paperHeight = 148;
-    break;
-  }
-
-  return pixelHeight / paperHeight;
+  return pixelHeight / paper[paperSize.val()].height;
 }
 
-function getPaperRatio (size, orientation, paperWidth = 0, paperHeight = 0) {
-
-  // Sizes are in mm
-  switch (size) {
-    case "A4":
-    paperHeight = 210;
-    paperWidth = 297;
-    break;
-
-    case "A5":
-    paperHeight = 148;
-    paperWidth = 210;
-    break;
-  }
-
-  return paperHeight / paperWidth;
-
+function getPaperRatio () {
+  return paper[paperSize.val()].height / paper[paperSize.val()].width;
 }
 
 function allowDrop(ev) {
@@ -468,26 +475,13 @@ function setImagesToMm () {
 }
 
 function setPageToMm () {
-  var paperWidth;
-  var paperHeight;
-
-  switch (paperSize.val()) {
-    case "A4":
-    paperHeight = 210;
-    paperWidth = 297;
-    break;
-
-    case "A5":
-    paperHeight = 148;
-    paperWidth = 210;
-    break;
-  }
+  let selectedPaper = paper[paperSize.val()];
 
   if (!isLandscape()) {
-    page.css("height", paperWidth  + "mm");
-    page.css("width", paperHeight  + "mm");
+    page.css("height", selectedPaper.width  + "mm");
+    page.css("width", selectedPaper.height  + "mm");
   } else {
-    page.css("height", paperHeight  + "mm");
-    page.css("width", paperWidth + "mm");
+    page.css("height", selectedPaper.height  + "mm");
+    page.css("width", selectedPaper.width + "mm");
   }
 }
