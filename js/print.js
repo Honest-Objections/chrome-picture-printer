@@ -21,20 +21,20 @@ var paper = {
     width:210
   },
   "US Letter": {
-    height:279,
-    width:216
+    height:216,
+    width:279,
   },
   "US Half Letter": {
-    height:216,
-    width:140
+    height:140,
+    width:216,
   },
   "US Legal": {
-    height:356,
-    width:216
+    height:216,
+    width:356,
   },
-  "Junior Legal": {
-    height:203,
-    width:127
+  "US Junior Legal": {
+    height:127,
+    width:203,
   }
 };
 
