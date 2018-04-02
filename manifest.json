@@ -4,7 +4,7 @@
 
   "name": "Picture Printer",
   "description": "An extension to format pictures when printing them via Google Cloud.",
-  "version": "0.6.0",
+  "version": "0.7.0",
 
   "browser_action": {
     "default_icon": "icon.png"
