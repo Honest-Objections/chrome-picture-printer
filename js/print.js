@@ -48,6 +48,7 @@ $('[name="apply"]', options).on("click", function () {
 
 // When user clicks print
 $('[name="print"]', options).on("click", function () {
+  alert("Don't forget to match your printer settings: \n\nMargins:  None \nPaper:  " + paperSize.val() + "\nOrientation:  " + orientation.val()); 
   ga('send', 'event', "Settings", "print");
   convertStylingToMm();
   $('#print-media').html(`
