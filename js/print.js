@@ -211,21 +211,19 @@ function setImageCount (amount) {
           [].forEach.call(e.dataTransfer.types, function (type) {
             if (type == "text/plain") {
               var url = e.dataTransfer.getData(type);
-              if (checkURL(url)) {
-                 ga('send', 'event', "Image", "added", "dragged");
-                 images.push(url);
-                 saveImages();
-                 setImageFromUrl(ev.target, url);
-                 imageUrl = true;
-                 return;
+              if (!checkURL(url)) {
+                alert("The link dragged probably won't load. \nTry right clicking and \"Open image in new tab\", then drag that.");
+                ga('send', 'event', "Image", "failed", "dragged");
+              } else {
+                ga('send', 'event', "Image", "added", "dragged");
               }
+             images.push(url);
+             saveImages();
+             setImageFromUrl(ev.target, url);
+             $(ev.target).removeClass('dragover');
+             return;
            }
           });
-          if (!imageUrl) {
-             alert("You must drag images directly.");
-             ga('send', 'event', "Image", "failed", "dragged");
-             $(ev.target).removeClass('dragover');
-          }
         }
 
       }
@@ -251,10 +249,13 @@ function setImageCount (amount) {
 }
 
 function checkURL(url) {
-  let valid = false;
-  valid = (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+  // Check direct image URL
+  let valid = (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+  // Check if Google Photos
   if (!valid) valid = (url.match(/googleusercontent/) != null);
+
   return valid;
+}
 
 function rotateImage (image) {
   var orgHeight = image.parent().height();
